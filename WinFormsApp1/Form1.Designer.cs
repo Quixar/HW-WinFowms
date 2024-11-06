@@ -28,47 +28,48 @@
         /// </summary>
         private void InitializeComponent()
         {
-            label1 = new Label();
             backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            label2 = new Label();
             button1 = new Button();
+            button2 = new Button();
+            textBox1 = new TextBox();
             SuspendLayout();
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(12, 9);
-            label1.Name = "label1";
-            label1.Size = new Size(38, 15);
-            label1.TabIndex = 0;
-            label1.Text = "label1";
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Location = new Point(12, 43);
-            label2.Name = "label2";
-            label2.Size = new Size(38, 15);
-            label2.TabIndex = 1;
-            label2.Text = "label2";
             // 
             // button1
             // 
-            button1.Location = new Point(60, 148);
+            button1.Location = new Point(155, 113);
             button1.Name = "button1";
-            button1.Size = new Size(75, 23);
-            button1.TabIndex = 2;
-            button1.Text = "Click";
+            button1.Size = new Size(119, 80);
+            button1.TabIndex = 0;
+            button1.Text = "Color";
             button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(341, 113);
+            button2.Name = "button2";
+            button2.Size = new Size(116, 80);
+            button2.TabIndex = 1;
+            button2.Text = "Font";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(233, 242);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(100, 23);
+            textBox1.TabIndex = 2;
+            textBox1.TextChanged += textBox1_TextChanged;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(309, 450);
+            ClientSize = new Size(654, 450);
+            Controls.Add(textBox1);
+            Controls.Add(button2);
             Controls.Add(button1);
-            Controls.Add(label2);
-            Controls.Add(label1);
             Name = "Form1";
             Text = "Form1";
             ResumeLayout(false);
@@ -76,10 +77,9 @@
         }
 
         #endregion
-
-        private Label label1;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
-        private Label label2;
         private Button button1;
+        private Button button2;
+        private TextBox textBox1;
     }
 }

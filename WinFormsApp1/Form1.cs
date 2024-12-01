@@ -12,9 +12,33 @@ namespace WinFormsApp1
         {
             InitializeComponent();
 
-            string fontUrl = "https://github.com/google/fonts/blob/main/apache/arimo/Arimo%5Bwght%5D.ttf";
+            this.Size = new Size(800, 500);
         }
 
-       
+        private void Form1_Paint(object sender, PaintEventArgs e)
+        {
+            Graphics g = e.Graphics;
+
+            int flagWidth = 760;
+            int flagHeight = 400;
+
+            int startX = 20;
+            int startY = 20;
+
+            int stripeHeight = flagHeight / 6;
+            g.FillRectangle(Brushes.Blue, startX, startY, flagWidth, stripeHeight); 
+            g.FillRectangle(Brushes.Blue, startX, startY + flagHeight - stripeHeight, flagWidth, stripeHeight);
+
+            g.FillRectangle(Brushes.White, startX, startY + stripeHeight, flagWidth, stripeHeight / 2); 
+            g.FillRectangle(Brushes.White, startX, startY + flagHeight - stripeHeight - stripeHeight / 2, flagWidth, stripeHeight / 2); 
+
+            g.FillRectangle(Brushes.Red, startX, startY + stripeHeight + stripeHeight / 2, flagWidth, flagHeight - 2 * (stripeHeight + stripeHeight / 2));
+
+            int circleDiameter = 120;
+            int circleX = startX + 80;
+            int circleY = startY + flagHeight / 2 - circleDiameter / 2;
+            g.FillEllipse(Brushes.White, circleX, circleY, circleDiameter, circleDiameter);
+
+        }
     }
 }

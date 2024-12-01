@@ -1,95 +1,44 @@
 using System.Diagnostics;
+using System.Drawing.Text;
 using Timer = System.Windows.Forms.Timer;
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        Stopwatch stopwatch = new Stopwatch();
+        PrivateFontCollection fonts = new PrivateFontCollection();
+
         public Form1()
         {
             InitializeComponent();
-            Task1();
-            Task2();
-            Task3();
+
+            this.Size = new Size(800, 500);
         }
 
-        public void Task1()
+        private void Form1_Paint(object sender, PaintEventArgs e)
         {
-            Timer timer = new Timer();
-            timer.Interval = 1;
-            timer.Tick += Task1_Tick;
-            timer.Start();
-            stopwatch.Start();
-        }
+            Graphics g = e.Graphics;
 
-        private void Task1_Tick(object? sender, EventArgs e)
-        {
-            label1.Text = $"{stopwatch.ElapsedMilliseconds}";
-        }
+            int flagWidth = 760;
+            int flagHeight = 400;
 
-        private void Task2()
-        {
-            Timer timer = new Timer();
-            timer.Interval = 1000;
-            timer.Tick += Task2_Tick;
-            timer.Start();
-            Task2_Tick(null, EventArgs.Empty);
-        }
+            int startX = 20;
+            int startY = 20;
 
-        private void Task2_Tick(object? sender, EventArgs e)
-        {
-            DateTime targetDate = new DateTime(2025, 1, 1, 0, 0, 0);
-            TimeSpan timeLeft = targetDate - DateTime.Now;
+            int stripeHeight = flagHeight / 6;
+            g.FillRectangle(Brushes.Blue, startX, startY, flagWidth, stripeHeight); 
+            g.FillRectangle(Brushes.Blue, startX, startY + flagHeight - stripeHeight, flagWidth, stripeHeight);
 
-            if (timeLeft.TotalSeconds > 0)
-            {
-                label2.Text = $"{timeLeft.Days} days, {timeLeft.Hours} hours, {timeLeft.Minutes} minutes, {timeLeft.Seconds}, seconds";
-            }
-            else
-            {
-                label2.Text = "Event has come";
-            }
-        }
+            g.FillRectangle(Brushes.White, startX, startY + stripeHeight, flagWidth, stripeHeight / 2); 
+            g.FillRectangle(Brushes.White, startX, startY + flagHeight - stripeHeight - stripeHeight / 2, flagWidth, stripeHeight / 2); 
 
-        public void Task3()
-        {
-            int clickCount = 0;        
-            int highScore = 0;      
+            g.FillRectangle(Brushes.Red, startX, startY + stripeHeight + stripeHeight / 2, flagWidth, flagHeight - 2 * (stripeHeight + stripeHeight / 2));
 
-            Timer gameTimer = new Timer();
-            gameTimer.Interval = 1000;
-            int timeLeft = 20;
+            int circleDiameter = 120;
+            int circleX = startX + 80;
+            int circleY = startY + flagHeight / 2 - circleDiameter / 2;
+            g.FillEllipse(Brushes.White, circleX, circleY, circleDiameter, circleDiameter);
 
-            Controls.Add(button1);
-
-            button1.Click += (s, e) =>
-            {
-                if (gameTimer.Enabled)
-                {
-                    clickCount++;
-                }
-            };
-
-            gameTimer.Tick += (s, e) =>
-            {
-                timeLeft--;
-
-                if (timeLeft <= 0)
-                {
-                    gameTimer.Stop();
-
-                    if (clickCount > highScore)
-                    {
-                        highScore = clickCount;
-                    }
-                    
-                    MessageBox.Show($"Time's up!\nClicks: {clickCount}\nHigh Score: {highScore}", "Game Over");
-                    clickCount = 0;
-                    timeLeft = 20;
-                }
-            };
-            gameTimer.Start();
         }
     }
 }

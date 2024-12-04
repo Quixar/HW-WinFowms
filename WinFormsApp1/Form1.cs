@@ -1,75 +1,112 @@
-using System.Diagnostics;
-using System.Drawing.Text;
-using Timer = System.Windows.Forms.Timer;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
 
 namespace WinFormsApp1
 {
     public partial class Form1 : Form
     {
-        private PrivateFontCollection privateFontCollection;
+        private List<string> imagePaths = new List<string>();
+        private int currentIndex = -1;
 
         public Form1()
         {
             InitializeComponent();
-            privateFontCollection = new PrivateFontCollection();
         }
 
-        private async void Form1_Load(object sender, EventArgs e)
+        private void BtnAdd_Click(object sender, EventArgs e)
         {
-            string fontUrl = "https://github.com/google/fonts/raw/main/ofl/bokor/Bokor-Regular.ttf";
-            string fontFilePath = Path.Combine(Path.GetTempPath(), "Bokor-Regular.ttf");
-
-            byte[] fontData;
-            using (HttpClient client = new HttpClient())
+            using (OpenFileDialog openFileDialog = new OpenFileDialog())
             {
-                try
+                openFileDialog.Filter = "Image Files|*.jpg;*.jpeg;*.png;*.bmp";
+                openFileDialog.Multiselect = true;
+
+                if (openFileDialog.ShowDialog() == DialogResult.OK)
                 {
-                    fontData = await client.GetByteArrayAsync(fontUrl);
-                    File.WriteAllBytes(fontFilePath, fontData);
+                    foreach (string filePath in openFileDialog.FileNames)
+                    {
+                        if (!imagePaths.Contains(filePath))
+                        {
+                            imagePaths.Add(filePath);
+                            AddThumbnail(filePath);
+                        }
+                    }
                 }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Error when loading font: {ex.Message}");
-                    return;
-                }
-            }
-
-            privateFontCollection.AddFontFile(fontFilePath);
-
-            if (privateFontCollection.Families.Length == 0)
-            {
-                MessageBox.Show("Failed to load the font.");
-                return;
-            }
-
-            FontFamily fontFamily = privateFontCollection.Families[0];
-            Font newFont = new Font(fontFamily, 12);
-
-            ApplyFont(this, newFont);
-
-            try
-            {
-                File.Delete(fontFilePath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Error when deleting a temporary file: {ex.Message}");
             }
         }
 
-        private void ApplyFont(Control parent, Font font)
+        private void AddThumbnail(string filePath)
         {
-            foreach (Control control in parent.Controls)
+            var thumbnail = new PictureBox
             {
-                if (control is TextBox || control is Button || control is Label || control is ComboBox || control is ListBox)
+                Image = Image.FromFile(filePath),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                Width = 100,
+                Height = 100,
+                Tag = filePath,
+                Margin = new Padding(5)
+            };
+
+            thumbnail.Click += (s, e) => ShowImage(filePath);
+            flowLayoutPanel.Controls.Add(thumbnail);
+        }
+
+        private void ShowImage(string filePath)
+        {
+            pictureBox.Image = Image.FromFile(filePath);
+            currentIndex = imagePaths.IndexOf(filePath);
+        }
+
+        private void BtnDelete_Click(object sender, EventArgs e)
+        {
+            if (currentIndex >= 0 && currentIndex < imagePaths.Count)
+            {
+                var filePath = imagePaths[currentIndex];
+                imagePaths.RemoveAt(currentIndex);
+
+                // Удалить миниатюру
+                var thumbnail = flowLayoutPanel.Controls
+                    .OfType<PictureBox>()
+                    .FirstOrDefault(p => (string)p.Tag == filePath);
+
+                if (thumbnail != null)
                 {
-                    control.Font = font;
+                    flowLayoutPanel.Controls.Remove(thumbnail);
+                    thumbnail.Dispose();
                 }
 
-                if (control.HasChildren)
+                // Очистить или показать следующее изображение
+                if (imagePaths.Count == 0)
                 {
-                    ApplyFont(control, font);
+                    pictureBox.Image = null;
+                    currentIndex = -1;
                 }
+                else
+                {
+                    currentIndex = Math.Min(currentIndex, imagePaths.Count - 1);
+                    ShowImage(imagePaths[currentIndex]);
+                }
+            }
+        }
+
+        private void BtnPrev_Click(object sender, EventArgs e)
+        {
+            if (currentIndex > 0)
+            {
+                currentIndex--;
+                ShowImage(imagePaths[currentIndex]);
+            }
+        }
+
+        private void BtnNext_Click(object sender, EventArgs e)
+        {
+            if (currentIndex < imagePaths.Count - 1)
+            {
+                currentIndex++;
+                ShowImage(imagePaths[currentIndex]);
             }
         }
     }

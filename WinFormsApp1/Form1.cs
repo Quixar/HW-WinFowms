@@ -67,7 +67,6 @@ namespace WinFormsApp1
                 var filePath = imagePaths[currentIndex];
                 imagePaths.RemoveAt(currentIndex);
 
-                // Удалить миниатюру
                 var thumbnail = flowLayoutPanel.Controls
                     .OfType<PictureBox>()
                     .FirstOrDefault(p => (string)p.Tag == filePath);
@@ -78,7 +77,6 @@ namespace WinFormsApp1
                     thumbnail.Dispose();
                 }
 
-                // Очистить или показать следующее изображение
                 if (imagePaths.Count == 0)
                 {
                     pictureBox.Image = null;
